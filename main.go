@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"strconv"
 
@@ -17,15 +16,8 @@ type MyLabel struct{
 
 func makeLabel(t string) MyLabel  {
 	l:= MyLabel{}
-	//StretchFactor:1,AlwaysConsumeSpace:false,MaxSize:d.Size{Height:10,Width:0}
 	l.Text = t
 	l.Font = defFont
-	//l.StretchFactor = 1
-	//l.AlwaysConsumeSpace = false
-	//l.MaxSize = d.Size{Height:20,Width:0}
-	// l.Background = d.SolidColorBrush{
-	// 	Color: walk.RGB(128,0,128),
-	// }
 	return l
 }
 
@@ -38,9 +30,6 @@ func main() {
 	winsz := d.Size{Width: 800, Height: 0}
 	sz := d.Size{Width: 0, Height:420}
 	sz2 := d.Size{Width: 0, Height:200}
-	 
-	//noVgrowLayout := walk.NewVBoxLayout()
-	//noVgrowLayout.
 
 	if _, err := (d.MainWindow{
 		AssignTo: &mw,
@@ -62,11 +51,11 @@ func main() {
 						AlwaysConsumeSpace: false,
 						OnClicked: func() {
 							if err := fdb.Submit(); err != nil {
-								log.Print(err)
+								errorMsg(mw,err,"DataBinder Submit Error")
 								return
 							}
 							if err := tdb.Submit(); err != nil {
-								log.Print(err)
+								errorMsg(mw,err,"DataBinder Submit Error")
 								return
 							}
 							
@@ -75,7 +64,7 @@ func main() {
 							i, err := strconv.ParseFloat(fte.Text(), 64)
 							if err != nil {
 								
-								errorDialog(mw, err, "Wrong Format")
+								errorMsg(mw, err, "Wrong Format")
 								fte.SetText("")
 							}
 							o := c.apply(i)
@@ -163,12 +152,8 @@ func main() {
 			d.VSpacer{},
 		},
 	}.Run()); err != nil {
-		log.Fatal(err)
+		errorMsg(mw, err,"Run Error")
 	}
-	//log.Println("Outside")
-	
-	
-
 }
 
 var defFont = d.Font{PointSize: 24}
@@ -220,7 +205,7 @@ func (f unit) apply(v float64) float64 {
 	return v * math.Pow10(f.U) * math.Pow(60, float64(f.S)) * math.Pow(8, float64(f.B))
 }
 
-func errorDialog( c *walk.MainWindow, e error, s string)int{
+func errorMsg( c *walk.MainWindow, e error, s string)int{
 	return walk.MsgBox(c,
 		s,
 		e.Error(),
