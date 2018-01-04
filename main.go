@@ -1,10 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"math"
 	"strconv"
-
+	"github.com/biessek/golang-ico"
 	"github.com/lxn/walk"
 	d "github.com/lxn/walk/declarative"
 )
@@ -31,10 +32,12 @@ func main() {
 	sz := d.Size{Width: 0, Height:420}
 	sz2 := d.Size{Width: 0, Height:200}
 
-	if _, err := (d.MainWindow{
+	
+
+	if err := (d.MainWindow{
 		AssignTo: &mw,
 		Title:    "Bandwidth Converter",
-		Icon: "assets/bconv.ico",
+		//Icon: "assets/bconv.ico",
 		Layout:   d.VBox{},
 		MinSize: winsz,
 		Children: []d.Widget{
@@ -151,9 +154,18 @@ func main() {
 			},
 			d.VSpacer{},
 		},
-	}.Run()); err != nil {
+	}.Create()); err != nil {
 		errorMsg(mw, err,"Run Error")
 	}
+
+	iconBytes, _ := Asset("assets/bconv.ico")
+	iconImage, _ := ico.Decode(bytes.NewReader(iconBytes))
+	ic, _ := walk.NewIconFromImage(iconImage)
+	if ic != nil{
+		mw.SetIcon(ic)
+	}
+	
+	mw.Run()
 }
 
 var defFont = d.Font{PointSize: 24}
